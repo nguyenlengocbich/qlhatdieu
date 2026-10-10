@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, FileText, GripVertical, Pencil, Search } from "lucide-react";
-import { prisma } from "@/lib/prisma";
+import { backendFetch } from "@/lib/backend";
 
 export const dynamic = "force-dynamic";
 
 export default async function WebsitePage() {
-  const sections = await prisma.siteSection.findMany({ orderBy: { sortOrder: "asc" } });
+  const response = await backendFetch("/api/sections");
+  if (!response.ok) throw new Error("Không thể lấy dữ liệu section từ backend .NET");
+  const sections: Array<{ id: number; name: string; key: string; title: string | null; description: string | null; status: string }> = await response.json();
 
   return (
     <div className="space-y-7">

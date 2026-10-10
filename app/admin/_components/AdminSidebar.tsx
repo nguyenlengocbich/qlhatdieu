@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   ExternalLink,
   FileText,
@@ -27,7 +27,6 @@ const navGroups = [
 
 export default function AdminSidebar() {
   const pathname = usePathname();
-  const router = useRouter();
 
   async function handleLogout() {
     try {
@@ -37,8 +36,7 @@ export default function AdminSidebar() {
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
-      router.replace("/admin/login");
-      router.refresh();
+      window.location.href = "/admin/login";
     }
   }
 

@@ -1,81 +1,44 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { cookies } from "next/headers";
+import { BACKEND_API_URL } from "@/lib/backend";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+async function callBackend(id: string, request: NextRequest, method: string, body?: unknown) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("admin_session")?.value;
+  return fetch(`${BACKEND_API_URL}/api/sections/${id}`, {
+    method,
+    headers: {
+      ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+    cache: "no-store",
+  });
+}
+
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   try {
-    const { id } = await params;
-
-    const section = await prisma.siteSection.findUnique({
-      where: {
-        id: Number(id),
-      },
-    });
-
-    if (!section) {
-      return NextResponse.json(
-        {
-          error: "Không tìm thấy section",
-        },
-        {
-          status: 404,
-        }
-      );
-    }
-
-    return NextResponse.json(section);
+    const response = await callBackend(id, request, "GET");
+    const data = await response.json();
+    return NextResponse.json(data, { status: response.status });
   } catch (error) {
     console.error(error);
-
-    return NextResponse.json(
-      {
-        error: "Không thể lấy section",
-      },
-      {
-        status: 500,
-      }
-    );
+    return NextResponse.json({ error: "Không thể lấy section" }, { status: 500 });
   }
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   try {
-    const { id } = await params;
     const body = await request.json();
-
-    const section = await prisma.siteSection.update({
-      where: {
-        id: Number(id),
-      },
-      data: {
-        name: body.name,
-        title: body.title,
-        subtitle: body.subtitle,
-        description: body.description,
-        content: body.content,
-        image: body.image,
-        status: body.status,
-      },
-    });
-
-    return NextResponse.json(section);
+    const response = await callBackend(id, request, "PUT", body);
+    const data = await response.json();
+    return NextResponse.json(data, { status: response.status });
   } catch (error) {
     console.error(error);
-
-    return NextResponse.json(
-      {
-        error: "Không thể cập nhật section",
-      },
-      {
-        status: 500,
-      }
-    );
+    return NextResponse.json({ error: "Không thể cập nhật section" }, { status: 500 });
   }
 }

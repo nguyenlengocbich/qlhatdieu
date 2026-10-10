@@ -1,5 +1,4 @@
 import {
-  ArrowRight,
   Boxes,
   Factory,
   PackageCheck,
@@ -40,7 +39,7 @@ export default function Warehouses({
           </p>
         </div>
 
-        <div className="mt-14 grid gap-4 lg:grid-cols-[1fr_auto_1fr_auto_1fr] lg:items-stretch">
+        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item, index) => {
             const Icon =
               item.icon &&
@@ -51,7 +50,7 @@ export default function Warehouses({
                 : Boxes;
 
             return (
-              <div key={item.id} className="contents">
+              <div key={item.id} className="min-w-0">
                 <article className="group rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl">
                   <div className="flex items-start justify-between">
                     <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 transition group-hover:bg-blue-600 group-hover:text-white">
@@ -71,12 +70,6 @@ export default function Warehouses({
                     {item.description}
                   </p>
                 </article>
-
-                {index < items.length - 1 && (
-                  <div className="hidden items-center justify-center lg:flex">
-                    <ArrowRight className="h-6 w-6 text-blue-500" />
-                  </div>
-                )}
               </div>
             );
           })}

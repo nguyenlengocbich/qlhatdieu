@@ -1,3 +1,4 @@
+import { landingImageSrc } from "./landingImageSrc";
 import {
   CircleDot,
   ClipboardList,
@@ -40,7 +41,7 @@ export default function Production({
               <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
                 {section?.image ? (
                   <img
-                    src={section.image}
+                    src={landingImageSrc(section.image)}
                     alt={section.title || "Quản lý sản xuất"}
                     className="block h-auto w-full object-contain"
                   />

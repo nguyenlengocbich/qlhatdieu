@@ -41,3 +41,28 @@ yarn-error.log*
 next-env.d.ts
 
 /lib/generated/prisma
+
+# ASP.NET Core build outputs
+app/backend/**/bin/
+app/backend/**/obj/
+app/backend/publish/
+app/backend/publish-selfcontained/
+app/backend/**/publish/
+app/backend/**/publish-selfcontained/
+
+# Sensitive backend configuration
+app/backend/appsettings.json
+app/backend/appsettings.*.json
+!app/backend/appsettings.example.json
+
+# Logs and temporary files
+app/backend/logs/
+app/backend/**/*.log
+*.db
+*.sqlite
+*.sqlite3
+
+# Publish archives
+publish.zip
+publish-selfcontained.zip
+

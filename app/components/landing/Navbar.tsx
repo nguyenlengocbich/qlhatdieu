@@ -16,7 +16,7 @@ export default function Navbar() {
   return (
     <header className="fixed top-0 z-50 w-full border-b bg-white/90 backdrop-blur">
       <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-6">    
-        <a href="#" className="flex items-center gap-2">
+        <a href="#gioi-thieu" className="flex items-center gap-2">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white font-bold">
             A
           </div>

@@ -9,6 +9,8 @@ import {
   Upload,
 } from "lucide-react";
 
+import { landingImageSrc } from "@/app/components/landing/landingImageSrc";
+
 type Props = {
   value?: string | null;
   onChange: (url: string) => void;
@@ -107,7 +109,7 @@ export default function ImageUploader({
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
           <div className={compact ? "aspect-[16/9]" : "aspect-[16/8]"}>
             <img
-              src={value}
+              src={landingImageSrc(value)}
               alt="Ảnh đã chọn"
               className="h-full w-full object-contain"
             />

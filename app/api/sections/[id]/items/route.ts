@@ -1,109 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { cookies } from "next/headers";
+import { BACKEND_API_URL } from "@/lib/backend";
 
-export const dynamic = "force-dynamic";
-
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await params;
-
-    const section = await prisma.siteSection.findUnique({
-      where: {
-        id: Number(id),
-      },
-    });
-
-    if (!section) {
-      return NextResponse.json(
-        { error: "Không tìm thấy section" },
-        { status: 404 }
-      );
-    }
-
-    const items = await prisma.siteItem.findMany({
-      where: {
-        sectionKey: section.key,
-      },
-      orderBy: {
-        sortOrder: "asc",
-      },
-    });
-
-    return NextResponse.json(items);
-  } catch (error) {
-    console.error(error);
-
-    return NextResponse.json(
-      { error: "Không thể lấy danh sách item" },
-      { status: 500 }
-    );
-  }
+async function proxy(id: string, method: string, body?: unknown) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("admin_session")?.value;
+  return fetch(`${BACKEND_API_URL}/api/sections/${id}/items`, {
+    method,
+    headers: {
+      ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+    cache: "no-store",
+  });
 }
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await params;
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const response = await proxy(id, "GET");
+  const data = await response.json();
+  return NextResponse.json(data, { status: response.status });
+}
 
-    const section = await prisma.siteSection.findUnique({
-      where: {
-        id: Number(id),
-      },
-    });
-
-    if (!section) {
-      return NextResponse.json(
-        { error: "Không tìm thấy section" },
-        { status: 404 }
-      );
-    }
-
-    const body = await request.json();
-
-    if (!body.title?.trim()) {
-      return NextResponse.json(
-        { error: "Tiêu đề item không được để trống" },
-        { status: 400 }
-      );
-    }
-
-    const lastItem = await prisma.siteItem.findFirst({
-      where: {
-        sectionKey: section.key,
-      },
-      orderBy: {
-        sortOrder: "desc",
-      },
-    });
-
-    const item = await prisma.siteItem.create({
-      data: {
-        sectionKey: section.key,
-        title: body.title.trim(),
-        description: body.description?.trim() || null,
-        icon: body.icon || null,
-        image: body.image || null,
-        sortOrder: lastItem
-          ? lastItem.sortOrder + 1
-          : 1,
-        status: body.status || "published",
-      },
-    });
-
-    return NextResponse.json(item, {
-      status: 201,
-    });
-  } catch (error) {
-    console.error(error);
-
-    return NextResponse.json(
-      { error: "Không thể thêm item" },
-      { status: 500 }
-    );
-  }
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const body = await request.json();
+  const response = await proxy(id, "POST", body);
+  const data = await response.json();
+  return NextResponse.json(data, { status: response.status });
 }

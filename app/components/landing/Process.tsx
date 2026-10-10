@@ -64,7 +64,7 @@ export default function Process({
         <div className="relative mt-16">
           <div className="absolute left-[7%] right-[7%] top-8 hidden h-px bg-slate-200 lg:block" />
 
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-7">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
             {items.map((step, index) => {
               const Icon =
                 step.icon &&

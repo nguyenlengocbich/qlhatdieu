@@ -1,3 +1,4 @@
+import { landingImageSrc } from "./landingImageSrc";
 import {
   BarChart3,
   Boxes,
@@ -77,7 +78,7 @@ function ImagePreview({
   return (
     <div className={`overflow-hidden ${className}`}>
       <img
-        src={src}
+        src={landingImageSrc(src)}
         alt={alt}
         className="block h-full w-full object-contain"
       />
@@ -88,20 +89,16 @@ export default function Reports({
   section,
   items = [],
 }: Props) {
-  const warehouseReports = items.filter(
-    (item) =>
-      normalize(item.title).includes(
-        "lãi / lỗ kho"
-      )
-  );
-  const mainReports = items
-    .filter(
-      (item) =>
-        !normalize(item.title).includes(
-          "lãi / lỗ kho"
-        )
-    )
-    .slice(0, 2);
+  const isWarehouseReport = (item: SectionItem) => {
+    const title = normalize(item.title)
+      .replace(/\s*\/\s*/g, "/")
+      .replace(/\s+/g, " ");
+    return title.includes("kho") &&
+      (title.includes("lãi/lỗ") || title.includes("lãi lỗ"));
+  };
+
+  const warehouseReports = items.filter(isWarehouseReport);
+  const mainReports = items.filter((item) => !isWarehouseReport(item));
 
   return (
     <section
@@ -247,7 +244,6 @@ function WarehouseReportCard({
   item: SectionItem;
 }) {
   const Icon = getIcon(item.icon);
-
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl">
       <div className="bg-slate-100 p-3 sm:p-4">
@@ -260,7 +256,6 @@ function WarehouseReportCard({
         </div>
       </div>
       <div className="flex flex-1 flex-col p-6 sm:p-7">
-
         <div className="flex items-start gap-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
             <Icon
@@ -268,27 +263,22 @@ function WarehouseReportCard({
               strokeWidth={1.8}
             />
           </div>
-
           <div className="min-w-0">
             <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-blue-600">
               Báo cáo lãi / lỗ
             </p>
-
             <h4 className="mt-1 text-lg font-bold leading-7 text-slate-900">
               {item.title}
             </h4>
           </div>
         </div>
-
         {item.description && (
           <p className="mt-5 flex-1 text-sm leading-7 text-slate-600">
             {item.description}
           </p>
         )}
-
         <div className="mt-6 flex items-center gap-2 border-t border-slate-100 pt-5">
           <span className="h-2 w-2 rounded-full bg-emerald-500" />
-
           <span className="text-xs font-semibold text-slate-400">
             Phân tích hiệu quả kho
           </span>

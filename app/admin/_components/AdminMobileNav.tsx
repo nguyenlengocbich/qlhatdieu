@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   ChevronRight,
   FileText,
@@ -28,7 +28,6 @@ const groups = [
 
 export default function AdminMobileNav() {
   const pathname = usePathname();
-  const router = useRouter();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -52,8 +51,7 @@ export default function AdminMobileNav() {
       console.error("Logout error:", error);
     } finally {
       setOpen(false);
-      router.replace("/admin/login");
-      router.refresh();
+      window.location.href = "/admin/login";
     }
   }
 

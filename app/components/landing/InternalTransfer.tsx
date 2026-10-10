@@ -1,3 +1,4 @@
+import { landingImageSrc } from "./landingImageSrc";
 import {
   ArrowLeftRight,
   BarChart3,
@@ -96,7 +97,7 @@ export default function InternalTransfer({
               <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
                 {section?.image ? (
                   <img
-                    src={section.image}
+                    src={landingImageSrc(section.image)}
                     alt={
                       section.title ||
                       "Luân chuyển nội bộ"

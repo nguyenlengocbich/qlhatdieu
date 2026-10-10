@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
+import { backendFetch } from "@/lib/backend";
 import SectionEditor from "./SectionEditor";
 
 export const dynamic = "force-dynamic";
@@ -11,24 +11,15 @@ export default async function SectionEditPage({
 }) {
   const { id } = await params;
 
-  const section = await prisma.siteSection.findUnique({
-    where: {
-      id: Number(id),
-    },
-  });
+  const sectionResponse = await backendFetch(`/api/sections/${Number(id)}`);
+  const section = sectionResponse.ok ? await sectionResponse.json() : null;
 
   if (!section) {
     notFound();
   }
 
-  const items = await prisma.siteItem.findMany({
-    where: {
-      sectionKey: section.key,
-    },
-    orderBy: {
-      sortOrder: "asc",
-    },
-  });
+  const itemsResponse = await backendFetch(`/api/sections/${Number(id)}/items`);
+  const items = itemsResponse.ok ? await itemsResponse.json() : [];
 
   return (
     <SectionEditor
